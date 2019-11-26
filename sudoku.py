@@ -1,6 +1,3 @@
-from copy import deepcopy
-
-
 class Sudoku:
 
     def __init__(self, puzzle):
@@ -15,8 +12,8 @@ class Sudoku:
             if self.solved(puzzle):
                 self.puzzle = puzzle
                 return True
-            for i in range(9):
-                state = self.next(puzzle, i + 1)
+            for i in range(1, 10):
+                state = self.next(puzzle, i)
                 stack.append(state)
         return False
 
@@ -29,11 +26,11 @@ class Sudoku:
                 a = puzzle[i][j]
                 b = puzzle[j][i]
                 c = puzzle[3 * (i // 3) + j // 3][3 * (i % 3) + j % 3]
-                if a != 0:
+                if a:
                     row[a - 1] += 1
-                if b != 0:
+                if b:
                     col[b - 1] += 1
-                if c != 0:
+                if c:
                     reg[c - 1] += 1
             for j in range(9):
                 if row[j] > 1 or col[j] > 1 or reg[j] > 1:
@@ -43,17 +40,23 @@ class Sudoku:
     def solved(self, puzzle):
         for i in range(9):
             for j in range(9):
-                if puzzle[i][j] == 0:
+                if not puzzle[i][j]:
                     return False
         return True
 
     def next(self, puzzle, number):
-        state = deepcopy(puzzle)
+        state = []
+        flag = False
         for i in range(9):
+            row = []
             for j in range(9):
-                if state[i][j] == 0:
-                    state[i][j] = number
-                    return state
+                if flag or puzzle[i][j]:
+                    row.append(puzzle[i][j])
+                else:
+                    row.append(number)
+                    flag = True
+            state.append(row)
+        return state
 
     def print(self):
         for i in range(9):
